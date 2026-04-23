@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Dashboard</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+body {
+    background: #050505;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.active-tab {
+    background: linear-gradient(90deg,#A855F7,#22D3EE);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #A855F7;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+<!-- Sidebar -->
+<div class="w-64 glass p-4 flex flex-col space-y-4">
+    <h1 class="text-xl font-bold text-purple-400">TEAM OS</h1>
+
+    <button class="tab-btn active-tab p-2 rounded" data-tab="roster">Roster</button>
+    <button class="tab-btn p-2 rounded" data-tab="tasks">Daily Tasks</button>
+    <button class="tab-btn p-2 rounded" data-tab="hub">Team Hub</button>
+    <button class="tab-btn p-2 rounded" data-tab="calendar">Calendar</button>
+    <button class="tab-btn p-2 rounded" data-tab="links">Quick Links</button>
+
+    <div class="mt-auto text-xs text-gray-400">Ctrl + Shift + A → Admin</div>
+</div>
+
+<!-- Main -->
+<div class="flex-1 p-6 overflow-y-auto">
+
+<!-- ROSTER -->
+<div id="roster" class="tab">
+    <div class="flex justify-between mb-4">
+        <input id="search" placeholder="Search..." class="glass p-2 rounded w-1/3">
+        <button class="admin hidden glass px-4 py-2 rounded">+ Add</button>
+    </div>
+
+    <div id="rosterList" class="space-y-2"></div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="tab hidden">
+    <div class="grid grid-cols-3 gap-4">
+
+        <div class="glass p-4">
+            <h2 class="mb-2 text-cyan-400">Todo</h2>
+            <div id="todo"></div>
+        </div>
+
+        <div class="glass p-4">
+            <h2 class="mb-2 text-purple-400">In Progress</h2>
+            <div id="progress"></div>
+        </div>
+
+        <div class="glass p-4">
+            <h2 class="mb-2 text-green-400">Done</h2>
+            <div id="done"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- HUB -->
+<div id="hub" class="tab hidden grid grid-cols-3 gap-4">
+</div>
+
+<!-- CALENDAR -->
+<div id="calendar" class="tab hidden space-y-2">
+</div>
+
+<!-- LINKS -->
+<div id="links" class="tab hidden grid grid-cols-3 gap-4">
+</div>
+
+</div>
+
+<script>
+lucide.createIcons();
+
+let admin = false;
+
+// Ghost Login
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        let pass = prompt("Enter Admin Password");
+        if (pass === "Admin123") {
+            admin = !admin;
+            document.querySelectorAll('.admin').forEach(el=>{
+                el.classList.toggle('hidden', !admin);
+            });
+        }
+    }
+});
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
+        document.getElementById(btn.dataset.tab).classList.remove('hidden');
+
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active-tab'));
+        btn.classList.add('active-tab');
+    }
+});
+
+// DATA
+let roster = JSON.parse(localStorage.getItem('roster')) || [
+    {name:"Shivam", status:"Online"},
+    {name:"Harsh", status:"Busy"},
+    {name:"Deepika", status:"Offline"}
+];
+
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [
+    {text:"Fix DB issue", status:"todo"},
+    {text:"Deploy build", status:"progress"},
+    {text:"Update docs", status:"done"}
+];
+
+// SAVE
+function save() {
+    localStorage.setItem('roster', JSON.stringify(roster));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// ROSTER RENDER
+function renderRoster() {
+    let list = document.getElementById('rosterList');
+    list.innerHTML = '';
+
+    let search = document.getElementById('search').value.toLowerCase();
+
+    roster.filter(r=>r.name.toLowerCase().includes(search)).forEach((r,i)=>{
+        list.innerHTML += `
+        <div class="glass p-3 flex justify-between rounded">
+            <span>${r.name}</span>
+            <span class="text-xs ${r.status=='Online'?'text-green-400':r.status=='Busy'?'text-yellow-400':'text-gray-400'}">${r.status}</span>
+        </div>`;
+    });
+}
+document.getElementById('search').oninput = renderRoster;
+
+// TASKS
+function renderTasks() {
+    ['todo','progress','done'].forEach(s=>{
+        document.getElementById(s).innerHTML='';
+    });
+
+    tasks.forEach((t,i)=>{
+        let el = `<div class="glass p-2 mb-2 rounded">${t.text}</div>`;
+        document.getElementById(t.status).innerHTML += el;
+    });
+}
+
+// HUB
+let hubData = [
+    {name:"Shivam", skill:["SQL","Linux"]},
+    {name:"Harsh", skill:["Support","Infra"]},
+];
+
+function renderHub() {
+    let hub = document.getElementById('hub');
+    hub.innerHTML='';
+
+    hubData.forEach(h=>{
+        hub.innerHTML += `
+        <div class="glass p-4 rounded">
+            <div class="font-bold">${h.name}</div>
+            <div class="text-xs mt-2">${h.skill.map(s=>`<span class="bg-purple-500 px-2 py-1 rounded mr-1">${s}</span>`).join('')}</div>
+        </div>`;
+    });
+}
+
+// CALENDAR
+let events = [
+    {date:"24 Apr", text:"Team Meeting"},
+    {date:"25 Apr", text:"Deployment"}
+];
+
+function renderCalendar() {
+    let cal = document.getElementById('calendar');
+    cal.innerHTML='';
+
+    events.forEach(e=>{
+        cal.innerHTML += `
+        <div class="glass p-3 flex justify-between rounded">
+            <span>${e.text}</span>
+            <span class="text-cyan-400">${e.date}</span>
+        </div>`;
+    });
+}
+
+// LINKS
+let links = [
+    {name:"Slack", url:"https://slack.com"},
+    {name:"GitHub", url:"https://github.com"},
+    {name:"Drive", url:"https://drive.google.com"}
+];
+
+function renderLinks() {
+    let l = document.getElementById('links');
+    l.innerHTML='';
+
+    links.forEach(link=>{
+        l.innerHTML += `
+        <a href="${link.url}" target="_blank" class="glass p-6 rounded text-center hover:scale-105 transition">
+            ${link.name}
+        </a>`;
+    });
+}
+
+// INIT
+renderRoster();
+renderTasks();
+renderHub();
+renderCalendar();
+renderLinks();
+</script>
+
+</body>
+</html>
