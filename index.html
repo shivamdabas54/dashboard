@@ -3,245 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Dashboard</title>
+<title>Cyber Glass Dashboard</title>
 
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Lucide Icons -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
 body {
-    background: #050505;
-    color: white;
+    background: radial-gradient(circle at 20% 20%, #0a0a0a, #050505);
     font-family: 'Inter', sans-serif;
 }
 
+/* Glass Card */
 .glass {
     background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(18px);
     border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(168,85,247,0.08);
+    transition: all 0.3s ease;
 }
 
-.active-tab {
-    background: linear-gradient(90deg,#A855F7,#22D3EE);
+.glass:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 0 40px rgba(34,211,238,0.15);
 }
 
-::-webkit-scrollbar {
-    width: 6px;
+/* Neon Border Glow */
+.glow-border {
+    position: relative;
 }
-::-webkit-scrollbar-thumb {
-    background: #A855F7;
-    border-radius: 10px;
+
+.glow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 16px;
+    background: linear-gradient(120deg,#A855F7,#22D3EE);
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(6px);
+}
+
+.sidebar-btn:hover {
+    background: rgba(255,255,255,0.05);
 }
 </style>
 </head>
 
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen text-white">
 
-<!-- Sidebar -->
-<div class="w-64 glass p-4 flex flex-col space-y-4">
-    <h1 class="text-xl font-bold text-purple-400">TEAM OS</h1>
-
-    <button class="tab-btn active-tab p-2 rounded" data-tab="roster">Roster</button>
-    <button class="tab-btn p-2 rounded" data-tab="tasks">Daily Tasks</button>
-    <button class="tab-btn p-2 rounded" data-tab="hub">Team Hub</button>
-    <button class="tab-btn p-2 rounded" data-tab="calendar">Calendar</button>
-    <button class="tab-btn p-2 rounded" data-tab="links">Quick Links</button>
-
-    <div class="mt-auto text-xs text-gray-400">Ctrl + Shift + A → Admin</div>
+<!-- SIDEBAR -->
+<div class="w-20 flex flex-col items-center py-6 gap-6 glass m-4">
+    <i data-lucide="layout-dashboard"></i>
+    <i data-lucide="users"></i>
+    <i data-lucide="calendar"></i>
+    <i data-lucide="settings"></i>
 </div>
 
-<!-- Main -->
-<div class="flex-1 p-6 overflow-y-auto">
+<!-- MAIN -->
+<div class="flex-1 p-6 overflow-auto">
 
-<!-- ROSTER -->
-<div id="roster" class="tab">
-    <div class="flex justify-between mb-4">
-        <input id="search" placeholder="Search..." class="glass p-2 rounded w-1/3">
-        <button class="admin hidden glass px-4 py-2 rounded">+ Add</button>
-    </div>
+<!-- HEADER -->
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold">Dashboard</h1>
 
-    <div id="rosterList" class="space-y-2"></div>
-</div>
-
-<!-- TASKS -->
-<div id="tasks" class="tab hidden">
-    <div class="grid grid-cols-3 gap-4">
-
-        <div class="glass p-4">
-            <h2 class="mb-2 text-cyan-400">Todo</h2>
-            <div id="todo"></div>
-        </div>
-
-        <div class="glass p-4">
-            <h2 class="mb-2 text-purple-400">In Progress</h2>
-            <div id="progress"></div>
-        </div>
-
-        <div class="glass p-4">
-            <h2 class="mb-2 text-green-400">Done</h2>
-            <div id="done"></div>
-        </div>
-
+    <div class="glass px-4 py-2 flex items-center gap-2">
+        <i data-lucide="search"></i>
+        <input placeholder="Search..." class="bg-transparent outline-none text-sm">
     </div>
 </div>
 
-<!-- HUB -->
-<div id="hub" class="tab hidden grid grid-cols-3 gap-4">
+<!-- GRID -->
+<div class="grid grid-cols-4 gap-6">
+
+<!-- CARD 1 -->
+<div class="glass glow-border p-4 col-span-1">
+    <h2 class="text-sm text-gray-400">Team Online</h2>
+    <p class="text-2xl mt-2 text-cyan-400">12</p>
 </div>
 
-<!-- CALENDAR -->
-<div id="calendar" class="tab hidden space-y-2">
+<!-- CARD 2 -->
+<div class="glass glow-border p-4 col-span-1">
+    <h2 class="text-sm text-gray-400">Active Tasks</h2>
+    <p class="text-2xl mt-2 text-purple-400">28</p>
 </div>
 
-<!-- LINKS -->
-<div id="links" class="tab hidden grid grid-cols-3 gap-4">
+<!-- CARD 3 -->
+<div class="glass glow-border p-4 col-span-2">
+    <h2 class="text-sm text-gray-400 mb-3">Activity</h2>
+
+    <div class="h-24 flex items-end gap-2">
+        <div class="bg-purple-500 w-2 h-10"></div>
+        <div class="bg-cyan-400 w-2 h-16"></div>
+        <div class="bg-purple-500 w-2 h-6"></div>
+        <div class="bg-cyan-400 w-2 h-20"></div>
+        <div class="bg-purple-500 w-2 h-12"></div>
+    </div>
 </div>
 
+<!-- TASK BOARD -->
+<div class="glass glow-border p-4 col-span-2">
+    <h2 class="mb-3 text-gray-400">Tasks</h2>
+
+    <div class="space-y-2">
+        <div class="glass p-2 text-sm">Fix DB issue</div>
+        <div class="glass p-2 text-sm">Deploy backend</div>
+        <div class="glass p-2 text-sm">UI polish</div>
+    </div>
+</div>
+
+<!-- TEAM -->
+<div class="glass glow-border p-4 col-span-2">
+    <h2 class="mb-3 text-gray-400">Team</h2>
+
+    <div class="flex gap-4">
+        <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-purple-500"></div>
+            <p class="text-xs mt-1">Shivam</p>
+        </div>
+        <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-cyan-400"></div>
+            <p class="text-xs mt-1">Harsh</p>
+        </div>
+    </div>
+</div>
+
+</div>
 </div>
 
 <script>
 lucide.createIcons();
-
-let admin = false;
-
-// Ghost Login
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-        let pass = prompt("Enter Admin Password");
-        if (pass === "Admin123") {
-            admin = !admin;
-            document.querySelectorAll('.admin').forEach(el=>{
-                el.classList.toggle('hidden', !admin);
-            });
-        }
-    }
-});
-
-// Tabs
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.onclick = ()=>{
-        document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
-        document.getElementById(btn.dataset.tab).classList.remove('hidden');
-
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active-tab'));
-        btn.classList.add('active-tab');
-    }
-});
-
-// DATA
-let roster = JSON.parse(localStorage.getItem('roster')) || [
-    {name:"Shivam", status:"Online"},
-    {name:"Harsh", status:"Busy"},
-    {name:"Deepika", status:"Offline"}
-];
-
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [
-    {text:"Fix DB issue", status:"todo"},
-    {text:"Deploy build", status:"progress"},
-    {text:"Update docs", status:"done"}
-];
-
-// SAVE
-function save() {
-    localStorage.setItem('roster', JSON.stringify(roster));
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-// ROSTER RENDER
-function renderRoster() {
-    let list = document.getElementById('rosterList');
-    list.innerHTML = '';
-
-    let search = document.getElementById('search').value.toLowerCase();
-
-    roster.filter(r=>r.name.toLowerCase().includes(search)).forEach((r,i)=>{
-        list.innerHTML += `
-        <div class="glass p-3 flex justify-between rounded">
-            <span>${r.name}</span>
-            <span class="text-xs ${r.status=='Online'?'text-green-400':r.status=='Busy'?'text-yellow-400':'text-gray-400'}">${r.status}</span>
-        </div>`;
-    });
-}
-document.getElementById('search').oninput = renderRoster;
-
-// TASKS
-function renderTasks() {
-    ['todo','progress','done'].forEach(s=>{
-        document.getElementById(s).innerHTML='';
-    });
-
-    tasks.forEach((t,i)=>{
-        let el = `<div class="glass p-2 mb-2 rounded">${t.text}</div>`;
-        document.getElementById(t.status).innerHTML += el;
-    });
-}
-
-// HUB
-let hubData = [
-    {name:"Shivam", skill:["SQL","Linux"]},
-    {name:"Harsh", skill:["Support","Infra"]},
-];
-
-function renderHub() {
-    let hub = document.getElementById('hub');
-    hub.innerHTML='';
-
-    hubData.forEach(h=>{
-        hub.innerHTML += `
-        <div class="glass p-4 rounded">
-            <div class="font-bold">${h.name}</div>
-            <div class="text-xs mt-2">${h.skill.map(s=>`<span class="bg-purple-500 px-2 py-1 rounded mr-1">${s}</span>`).join('')}</div>
-        </div>`;
-    });
-}
-
-// CALENDAR
-let events = [
-    {date:"24 Apr", text:"Team Meeting"},
-    {date:"25 Apr", text:"Deployment"}
-];
-
-function renderCalendar() {
-    let cal = document.getElementById('calendar');
-    cal.innerHTML='';
-
-    events.forEach(e=>{
-        cal.innerHTML += `
-        <div class="glass p-3 flex justify-between rounded">
-            <span>${e.text}</span>
-            <span class="text-cyan-400">${e.date}</span>
-        </div>`;
-    });
-}
-
-// LINKS
-let links = [
-    {name:"Slack", url:"https://slack.com"},
-    {name:"GitHub", url:"https://github.com"},
-    {name:"Drive", url:"https://drive.google.com"}
-];
-
-function renderLinks() {
-    let l = document.getElementById('links');
-    l.innerHTML='';
-
-    links.forEach(link=>{
-        l.innerHTML += `
-        <a href="${link.url}" target="_blank" class="glass p-6 rounded text-center hover:scale-105 transition">
-            ${link.name}
-        </a>`;
-    });
-}
-
-// INIT
-renderRoster();
-renderTasks();
-renderHub();
-renderCalendar();
-renderLinks();
 </script>
 
 </body>
